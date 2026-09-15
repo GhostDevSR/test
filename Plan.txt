@@ -13,188 +13,129 @@ const S = {
 
 
 const responsiveCSS = `
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; overflow-x: hidden; }
 
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    margin: 0;
-    overflow-x: hidden;
-  }
+  /* hamburger: verborgen op desktop */
+  .sf-plan-hamburger { display: none !important; }
+  .sf-plan-nav-links { display: flex !important; }
 
   @media (max-width: 768px) {
-    nav {
-      padding: 0 12px !important;
-      gap: 8px !important;
-      height: 54px !important;
-      overflow-x: hidden !important;
+    .sf-plan-nav-links { display: none !important; }
+    .sf-plan-hamburger {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      width: 42px !important;
+      height: 42px !important;
+      font-size: 22px !important;
+      background: rgba(37,99,235,0.12) !important;
+      border: 1px solid rgba(37,99,235,0.25) !important;
+      border-radius: 10px !important;
+      color: #93c5fd !important;
+      padding: 0 !important;
     }
 
-    nav > div:last-child {
-      margin-left: 0 !important;
-      overflow-x: auto !important;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    nav > div:last-child::-webkit-scrollbar {
-      display: none;
-    }
-
-    nav button {
-      padding: 6px 8px !important;
-      font-size: 10px !important;
-      white-space: nowrap;
-    }
-
-    nav > span {
-      display: none !important;
-    }
-
+    /* Hero */
     div[style*="padding:72px 40px 56px"] {
-      padding: 44px 18px 36px !important;
-      width: 100% !important;
+      padding: 40px 16px 32px !important;
     }
-
     div[style*="padding:72px 40px 56px"] h1 {
-      font-size: clamp(1.8rem, 9vw, 2.5rem) !important;
-      line-height: 1.15 !important;
+      font-size: clamp(1.6rem, 8vw, 2.4rem) !important;
+      line-height: 1.2 !important;
     }
-
     div[style*="padding:72px 40px 56px"] p {
       font-size: 14px !important;
-      line-height: 1.7 !important;
     }
 
+    /* Content container */
     div[style*="max-width:940px"] {
-      padding-left: 14px !important;
-      padding-right: 14px !important;
-      padding-bottom: 50px !important;
-      width: 100% !important;
+      padding-left: 12px !important;
+      padding-right: 12px !important;
+      padding-bottom: 48px !important;
       max-width: 100% !important;
     }
 
-    div[style*="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"] {
-      grid-template-columns: 1fr !important;
-    }
-
+    /* Grid: altijd 1 kolom op mobiel */
+    div[style*="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))"],
+    div[style*="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))"],
     div[style*="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))"] {
       grid-template-columns: 1fr !important;
     }
 
+    /* Cards */
     div[style*="border-radius:14px"][style*="padding:24px"] {
-      padding: 18px !important;
+      padding: 16px !important;
       border-radius: 12px !important;
-      min-width: 0 !important;
-      width: 100% !important;
-      max-width: 100% !important;
     }
 
-    p {
-      max-width: 100%;
-      overflow-wrap: anywhere;
-      word-break: break-word;
+    /* Section headers */
+    h2[style*="font-size:21px"] {
+      font-size: 17px !important;
     }
 
-    /* Tabellen standaard volledig responsive */
+    /* Tabellen */
     table {
-      width: 100% !important;
-      min-width: 0 !important;
-      table-layout: auto !important;
+      font-size: 12px !important;
     }
-
-    th,
-    td {
-      padding: 9px 10px !important;
+    th, td {
+      padding: 8px 10px !important;
       font-size: 12px !important;
     }
 
-    /* Alleen brede tabellen horizontaal scrollbaar */
-    div[style*="tableLayout:fixed"] {
+    /* Brede tabellen: horizontaal scrollbaar */
+    div[style*="overflowX:'auto'"],
+    div[style*="overflow-x:auto"] {
       overflow-x: auto !important;
       -webkit-overflow-scrolling: touch;
     }
 
-    div[style*="tableLayout:fixed"] table {
-      min-width: 620px !important;
-      width: 620px !important;
-      table-layout: fixed !important;
+    /* Break-even kaartjes: 2 kolommen op mobiel */
+    div[style*="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))"] {
+      grid-template-columns: 1fr 1fr !important;
     }
 
-    div[style*="tableLayout:fixed"] th,
-    div[style*="tableLayout:fixed"] td {
-      padding: 9px 12px !important;
-      font-size: 12px !important;
+    /* Pricing grid */
+    div[style*="repeat(4,1fr)"] {
+      grid-template-columns: 1fr 1fr !important;
     }
 
-    div[style*="font-size:30px"] {
-      font-size: 25px !important;
+    /* Diensten grid */
+    div[style*="repeat(auto-fit,minmax(200px,1fr))"] {
+      grid-template-columns: 1fr 1fr !important;
     }
 
-    div[style*="font-size:24px"] {
-      font-size: 21px !important;
-    }
-
+    /* Footer */
     div[style*="padding:24px 32px"] {
-      padding: 20px 14px !important;
+      padding: 16px !important;
+      font-size: 11px !important;
+    }
+
+    p {
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
   }
 
   @media (max-width: 480px) {
-    nav {
-      height: 50px !important;
-    }
-
-    nav button {
-      font-size: 9px !important;
-      padding: 5px 7px !important;
-    }
-
-    div[style*="padding:72px 40px 56px"] {
-      padding: 34px 14px 28px !important;
-    }
-
     div[style*="padding:72px 40px 56px"] h1 {
-      font-size: 1.85rem !important;
+      font-size: 1.5rem !important;
     }
 
-    div[style*="padding:72px 40px 56px"] p {
-      font-size: 13px !important;
+    /* Alle grids op 480px: 1 kolom */
+    div[style*="grid-template-columns:1fr 1fr"],
+    div[style*="repeat(4,1fr)"],
+    div[style*="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))"] {
+      grid-template-columns: 1fr !important;
     }
 
     div[style*="max-width:940px"] {
       padding-left: 10px !important;
       padding-right: 10px !important;
     }
-
-    div[style*="border-radius:14px"][style*="padding:24px"] {
-      padding: 15px !important;
-    }
-
-    div[style*="font-size:30px"] {
-      font-size: 22px !important;
-    }
-
-    div[style*="font-size:24px"] {
-      font-size: 19px !important;
-    }
-
-    th,
-    td {
-      padding: 8px 8px !important;
-      font-size: 11px !important;
-    }
-
-    div[style*="tableLayout:fixed"] table {
-      min-width: 580px !important;
-      width: 580px !important;
-    }
   }
-`;
+`
 
 function Badge({ children, color='blue' }) {
   const map = { blue: [S.blueBg, S.blueLight, S.blueBorder], green: [S.greenBg, S.greenLight, S.greenBorder], orange: [S.orangeBg, S.orangeLight, S.orangeBorder], purple: [S.purpleBg, S.purpleLight, S.purpleBorder] }
@@ -332,7 +273,8 @@ function PlanContent() {
 
   const navItems = [
     ['samenvatting','📋 Samenvatting'],['ondernemer','👤 Ondernemer'],['onderneming','🏢 Onderneming'],
-    ['markt','📊 Markt'],['marketing','📣 Marketing'],['swot','⚖️ SWOT'],['financieel','💰 Financieel'],
+    ['markt','📊 Markt'],['marketing','📣 Marketing'],['swot','⚖️ SWOT'],
+    ['levensvatbaarheid','✅ Levensvatbaar'],['risico','⚠️ Risico'],['ontwikkeling','📚 Ontwikkeling'],['financieel','💰 Financieel'],
   ]
 
   function scrollTo(id) {
@@ -340,27 +282,56 @@ function PlanContent() {
     setActiveSection(id)
   }
 
+  const [menuOpen, setMenuOpen] = useState(false)
+
   return (
     <>
       <style>{responsiveCSS}</style>
       <div style={{ minHeight:'100vh', background:S.bg, color:S.text, fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif' }}>
 
       {/* Nav */}
-      <nav style={{ position:'sticky', top:0, zIndex:100, background:'rgba(10,15,30,0.96)', backdropFilter:'blur(20px)', borderBottom:`1px solid ${S.border}`, padding:'0 28px', display:'flex', alignItems:'center', height:58, gap:16, overflowX:'auto' }}>
+      <nav style={{ position:'sticky', top:0, zIndex:100, background:'rgba(10,15,30,0.96)', backdropFilter:'blur(20px)', borderBottom:`1px solid ${S.border}`, padding:'0 20px', display:'flex', alignItems:'center', height:58, gap:12 }}>
         <div style={{ display:'flex', alignItems:'center', gap:10, flexShrink:0 }}>
           <div style={{ width:30, height:30, background:'linear-gradient(135deg,#2563eb,#1d4ed8)', borderRadius:7, display:'flex', alignItems:'center', justifyContent:'center', fontSize:15 }}>🛡️</div>
           <span style={{ fontSize:15, fontWeight:800 }}>ShieldFlare</span>
         </div>
-        <span style={{ fontSize:10, background:S.blueBg, border:`1px solid ${S.blueBorder}`, color:S.blueLight, padding:'2px 8px', borderRadius:20, fontWeight:600, flexShrink:0 }}>Ondernemingsplan 2026</span>
-        <div style={{ display:'flex', gap:2, marginLeft:'auto', flexShrink:0 }}>
+        <span style={{ fontSize:10, background:S.blueBg, border:`1px solid ${S.blueBorder}`, color:S.blueLight, padding:'2px 8px', borderRadius:20, fontWeight:600, flexShrink:0, display:'var(--badge-display, inline-block)' }}>Ondernemingsplan 2026</span>
+
+        {/* Desktop links */}
+        <div className="sf-plan-nav-links" style={{ display:'flex', gap:2, marginLeft:'auto', flexShrink:0 }}>
           {navItems.map(([id, label]) => (
-            <button key={id} onClick={() => scrollTo(id)}
+            <button key={id} onClick={() => { scrollTo(id); setMenuOpen(false) }}
               style={{ padding:'5px 10px', fontSize:11, color: activeSection===id ? S.blueLight : S.dim, background: activeSection===id ? S.blueBg : 'none', border:'none', borderRadius:6, cursor:'pointer', whiteSpace:'nowrap', fontWeight: activeSection===id ? 600 : 400 }}>
               {label}
             </button>
           ))}
         </div>
+
+        {/* Hamburger */}
+        <button className="sf-plan-hamburger" onClick={() => setMenuOpen(o => !o)}
+          style={{ marginLeft:'auto', background:'none', border:'none', cursor:'pointer', padding:8, color:S.text, fontSize:20, display:'none', flexShrink:0 }}>
+          {menuOpen ? '✕' : '☰'}
+        </button>
       </nav>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="sf-plan-mobile-menu" style={{ position:'fixed', top:58, left:0, right:0, zIndex:99, background:'rgba(10,15,30,0.98)', backdropFilter:'blur(20px)', borderBottom:`1px solid ${S.border}`, padding:16, display:'flex', flexDirection:'column', gap:4 }}>
+          {navItems.map(([id, label]) => (
+            <button key={id} onClick={() => { scrollTo(id); setMenuOpen(false) }}
+              style={{ padding:'12px 16px', fontSize:14, color: activeSection===id ? S.blueLight : S.text, background: activeSection===id ? S.blueBg : 'none', border:'none', borderRadius:8, cursor:'pointer', textAlign:'left', fontWeight: activeSection===id ? 600 : 400 }}>
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .sf-plan-nav-links { display: none !important; }
+          .sf-plan-hamburger { display: flex !important; }
+        }
+      `}</style>
 
       {/* Hero */}
       <div style={{ padding:'72px 40px 56px', textAlign:'center', maxWidth:860, margin:'0 auto' }}>
@@ -419,7 +390,71 @@ function PlanContent() {
               </div>
             </Card>
           </div>
-          <Card title="🎯 Motivatie & achtergrond">
+          <Card title="📄 Curriculum Vitae">
+            <div style={{ marginBottom:20 }}>
+              <div style={{ fontSize:13, fontWeight:700, color:S.text, marginBottom:4 }}>Persoonlijke gegevens</div>
+              <div style={{ fontSize:13, color:S.dim, lineHeight:2 }}>
+                <strong style={{ color:S.text }}>Naam:</strong> Albert Robijn<br/>
+                <strong style={{ color:S.text }}>Leeftijd:</strong> 24 jaar<br/>
+                <strong style={{ color:S.text }}>Woonplaats:</strong> Nederland<br/>
+                <strong style={{ color:S.text }}>Opleiding:</strong> Zelfgeleerd (IT / Webontwikkeling / Cybersecurity)
+              </div>
+            </div>
+
+            <div style={{ position:'relative', paddingLeft:24 }}>
+              <div style={{ position:'absolute', left:8, top:6, bottom:6, width:2, background:`1px solid ${S.border}`, borderLeft:`2px solid rgba(37,99,235,0.3)` }}/>
+
+              {/* GhostDevelopment */}
+              <div style={{ marginBottom:24, position:'relative' }}>
+                <div style={{ position:'absolute', left:-20, top:4, width:10, height:10, borderRadius:'50%', background:S.blue, boxShadow:`0 0 8px rgba(37,99,235,0.5)` }}/>
+                <div style={{ fontSize:11, color:S.blueLight, fontWeight:600, marginBottom:3 }}>nov 2022 – apr 2024 · ca. 1,5 jaar</div>
+                <div style={{ fontSize:14, fontWeight:700, color:S.text, marginBottom:2 }}>Freelance Ontwikkelaar — GhostDevelopment</div>
+                <div style={{ fontSize:12, color:S.dim, marginBottom:6 }}>Zelfstandig · Nederland</div>
+                <div style={{ fontSize:13, color:S.dim, lineHeight:1.8 }}>
+                  Ontwikkeling van websites en applicaties voor klanten als zelfstandige onder de naam GhostDevelopment. Werkzaamheden omvatten frontend- en backend-ontwikkeling, klantcommunicatie, projectbeheer en oplevering van maatwerksoftware.
+                </div>
+                <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginTop:10 }}>
+                  {['Web Development','App Development','Klantcommunicatie','Projectbeheer','Maatwerk software'].map(t => (
+                    <span key={t} style={{ fontSize:10, fontWeight:600, padding:'2px 8px', borderRadius:20, background:S.blueBg, color:S.blueLight, border:`1px solid ${S.blueBorder}` }}>{t}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Autogarage */}
+              <div style={{ marginBottom:24, position:'relative' }}>
+                <div style={{ position:'absolute', left:-20, top:4, width:10, height:10, borderRadius:'50%', background:'#475569', boxShadow:'0 0 6px rgba(71,85,105,0.4)' }}/>
+                <div style={{ fontSize:11, color:S.dim, fontWeight:600, marginBottom:3 }}>2025 · ca. 6 maanden</div>
+                <div style={{ fontSize:14, fontWeight:700, color:S.text, marginBottom:2 }}>Medewerker — Autogarage</div>
+                <div style={{ fontSize:12, color:S.dim, marginBottom:6 }}>Loondienst · Nederland</div>
+                <div style={{ fontSize:13, color:S.dim, lineHeight:1.8 }}>
+                  Werkzaamheden in een autogarage. Heeft bijgedragen aan de ontwikkeling van werkdiscipline, samenwerken in een team en het omgaan met klanten in een professionele omgeving.
+                </div>
+                <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginTop:10 }}>
+                  {['Teamwork','Klantgerichtheid','Werkdiscipline'].map(t => (
+                    <span key={t} style={{ fontSize:10, fontWeight:600, padding:'2px 8px', borderRadius:20, background:'rgba(71,85,105,0.12)', color:'#94a3b8', border:'1px solid rgba(71,85,105,0.2)' }}>{t}</span>
+                  ))}
+                </div>
+              </div>
+
+              {/* ShieldFlare */}
+              <div style={{ position:'relative' }}>
+                <div style={{ position:'absolute', left:-20, top:4, width:10, height:10, borderRadius:'50%', background:S.green, boxShadow:`0 0 8px rgba(22,163,74,0.5)` }}/>
+                <div style={{ fontSize:11, color:S.greenLight, fontWeight:600, marginBottom:3 }}>2026 – heden · in ontwikkeling</div>
+                <div style={{ fontSize:14, fontWeight:700, color:S.text, marginBottom:2 }}>Oprichter & Ontwikkelaar — ShieldFlare</div>
+                <div style={{ fontSize:12, color:S.dim, marginBottom:6 }}>Zelfstandig · Nederland</div>
+                <div style={{ fontSize:13, color:S.dim, lineHeight:1.8 }}>
+                  Volledige ontwikkeling van een cyberbeveiligingsplatform inclusief backend (Node.js), frontend (React), database (MariaDB), DNS-systeem, WireGuard-integratie, WAF-proxy, Discord bot en WHMCS-module. Alles zelfstandig gebouwd zonder externe ontwikkelaars.
+                </div>
+                <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginTop:10 }}>
+                  {['Node.js','React','MariaDB','WireGuard','Cybersecurity','DNS','Linux','Apache'].map(t => (
+                    <span key={t} style={{ fontSize:10, fontWeight:600, padding:'2px 8px', borderRadius:20, background:S.greenBg, color:S.greenLight, border:`1px solid ${S.greenBorder}` }}>{t}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <Card title="🎯 Motivatie & achtergrond" style={{ marginTop:16 }}>
             <p style={{ marginBottom:12 }}>
               Albert Robijn is een zelfgeleerde ontwikkelaar die vanuit eigen interesse en ervaring met servers, netwerken en cybersecurity een volledig cyberbeveiligingsplatform heeft ontwikkeld. Zonder formele opleiding heeft hij zelfstandig de kennis opgebouwd die nodig is om een uitgebreid en professioneel platform te ontwikkelen, van backend-logica en databaseontwerp tot netwerkbeveiliging, DDoS-mitigatie en integraties met externe diensten.
             </p>
@@ -489,6 +524,34 @@ function PlanContent() {
               <p>De gameserver-markt is een specifieke niche waar Cloudflare geen TCP/UDP-proxy biedt — een directe kans voor ShieldFlare.</p>
             </Card>
           </div>
+          <Card title="🏆 Wat doet ShieldFlare anders?" style={{ marginBottom:16 }}>
+            <p style={{ marginBottom:16, fontSize:14, color:S.text, lineHeight:1.8 }}>
+              ShieldFlare is niet zomaar een alternatief voor Cloudflare. Het platform is gebouwd vanuit een specifieke behoefte die grote aanbieders onvoldoende invullen: betaalbare, flexibele bescherming voor kleine ondernemers, gameservers en resellers — alles onder één dak.
+            </p>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))', gap:14, marginBottom:16 }}>
+              {[
+                ['🎮','Gameserver Protection','Cloudflare biedt geen TCP/UDP-proxy voor gameservers. ShieldFlare wel — specifiek voor Minecraft, FiveM, CS2 en meer. Spelers merken geen verschil, aanvallen worden onzichtbaar afgeweerd.'],
+                ['🔒','IP Guard via WireGuard','Klanten met een dedicated server of VPS kunnen hun echte IP-adres volledig verbergen achter een ShieldFlare-tunnel. Aanvallers zien nooit het echte serveradres.'],
+                ['🏷️','Volledig reseller platform','Hostingbedrijven kunnen ShieldFlare-diensten onder eigen naam doorverkopen. Cloudflare biedt dit alleen in dure enterprise-contracten. ShieldFlare maakt het toegankelijk vanaf €80/mnd Enterprise.'],
+                ['🌐','Alles-in-één platform','Waar klanten bij Cloudflare nog aparte diensten nodig hebben voor e-mail, DNS en monitoring, biedt ShieldFlare dit alles geïntegreerd op één plek.'],
+                ['🇳🇱','Nederlands en toegankelijk','ShieldFlare is volledig Nederlandstalig, richt zich specifiek op de Nederlandse markt en biedt persoonlijke ondersteuning via Discord.'],
+                ['💰','Betaalbaar voor klein MKB','Met een gratis instapplan en abonnementen vanaf €10 per maand is ShieldFlare bereikbaar voor iedereen — van hobbyisten tot groeiende webshops.'],
+              ].map(([icon, title, desc]) => (
+                <div key={title} style={{ background:'rgba(37,99,235,0.05)', border:`1px solid ${S.border}`, borderRadius:12, padding:18 }}>
+                  <div style={{ fontSize:24, marginBottom:10 }}>{icon}</div>
+                  <div style={{ fontSize:13, fontWeight:700, color:S.text, marginBottom:8 }}>{title}</div>
+                  <div style={{ fontSize:12, color:S.dim, lineHeight:1.7 }}>{desc}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ background:S.blueBg, border:`1px solid ${S.blueBorder}`, borderRadius:12, padding:18 }}>
+              <div style={{ fontSize:13, fontWeight:700, color:S.blueLight, marginBottom:10 }}>📌 Kernboodschap</div>
+              <div style={{ fontSize:13, color:S.dim, lineHeight:1.8 }}>
+                ShieldFlare combineert wat grote aanbieders apart verkopen — en maakt dit betaalbaar voor een markt die tot nu toe tussen wal en schip valt. Cloudflare is te beperkt voor gameservers en biedt geen dedicated IP-bescherming. Path.net is uitstekend voor gameservers maar heeft geen reseller-platform en kost tot $500 per maand. OVHcloud biedt infrastructuur maar geen volledig beheerd beveiligingsplatform. ShieldFlare vult precies deze leemte: een volledig beheerd, betaalbaar en Nederlands platform waarbij klanten zelf kunnen kiezen hoeveel bescherming ze nodig hebben.
+              </div>
+            </div>
+          </Card>
+
           <Card title="⚔️ Concurrentieanalyse">
             <div style={{ overflowX:'auto', marginTop:8 }}>
               <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
@@ -585,7 +648,190 @@ function PlanContent() {
           </div>
         </Section></div>
 
-        {/* 7. Financieel */}
+        {/* 7. Levensvatbaarheid & urenverantwoording */}
+        <div id="levensvatbaarheid"><Section num="7" title="Levensvatbaarheid & urenverantwoording">
+
+          <Card title="✅ Levensvatbaarheid — conclusie" style={{ marginBottom:16 }}>
+            <p style={{ fontSize:15, color:S.text, lineHeight:1.9, marginBottom:16 }}>
+              Het Bbz vereist dat een onderneming binnen 3 jaar levensvatbaar is: het bedrijf moet voldoende inkomen genereren om in het levensonderhoud van de ondernemer te voorzien én de bedrijfskosten te dekken. Hieronder wordt aangetoond dat ShieldFlare aan deze eis voldoet.
+            </p>
+
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))', gap:14, marginBottom:20 }}>
+              {[
+                ['🏠 Privébehoefte/mnd','€ 320','Vaste persoonlijke lasten (thuis wonend)'],
+                ['🖥️ Bedrijfskosten/mnd','€ 1.116','Inclusief infrastructuur, marketing, admin'],
+                ['💰 Break-even omzet/mnd','~€ 1.200','Bedrijfskosten + kleine privébuffer'],
+                ['👥 Benodigde klanten','~47–51','Bij gem. €24/klant/mnd'],
+                ['📅 Verwacht break-even','Jaar 2','Op basis van groeiprognose'],
+                ['📈 Resultaat jaar 3','+€ 42.214','Ruim boven levensvatbaarheidsnorm'],
+              ].map(([label, value, sub]) => (
+                <div key={label} style={{ background:S.surface, border:`1px solid ${S.border}`, borderRadius:12, padding:16, textAlign:'center' }}>
+                  <div style={{ fontSize:11, color:S.dim, marginBottom:6 }}>{label}</div>
+                  <div style={{ fontSize:20, fontWeight:800, color:S.blueLight }}>{value}</div>
+                  <div style={{ fontSize:11, color:S.dim, marginTop:4 }}>{sub}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ background:S.greenBg, border:`1px solid ${S.greenBorder}`, borderRadius:12, padding:18, marginBottom:16 }}>
+              <div style={{ fontSize:13, fontWeight:700, color:S.greenLight, marginBottom:8 }}>🎯 Conclusie levensvatbaarheid</div>
+              <div style={{ fontSize:13, color:S.dim, lineHeight:1.8 }}>
+                Op basis van de exploitatiebegroting wordt ShieldFlare in jaar 2 operationeel winstgevend en in jaar 3 structureel levensvatbaar met een positief bedrijfsresultaat van ruim €42.000. Dit is ruimschoots voldoende om in het levensonderhoud te voorzien (privébehoefte €320/mnd = €3.840/jaar) en de bedrijfskosten te dekken.
+                <br/><br/>
+                De lage privébehoefte van Albert Robijn (thuis wonend, geen huur) maakt dat de levensvatbaarheidsdrempel relatief laag ligt. Het bedrijf hoeft slechts circa 50 betalende klanten te bereiken om volledig zelfvoorzienend te zijn — een realistisch doel binnen de gestelde 3 jaar.
+              </div>
+            </div>
+
+            <div style={{ overflowX:'auto' }}>
+              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
+                <thead>
+                  <tr>{['','Jaar 1','Jaar 2','Jaar 3'].map(h => <th key={h} style={{ padding:'9px 14px', textAlign: h==='' ? 'left' : 'right', background:'rgba(37,99,235,0.08)', color:S.blueLight, fontSize:11, fontWeight:700 }}>{h}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['Bedrijfsresultaat','-€ 8.576','+€ 6.894','+€ 42.214'],
+                    ['Privébehoefte (jaar)','-€ 3.840','-€ 3.840','-€ 3.840'],
+                    ['Netto beschikbaar','-€ 12.416','+€ 3.054','+€ 38.374'],
+                    ['Levensvatbaar?','❌ Nee (aanloopverlies)','✅ Ja','✅ Ja — ruimschoots'],
+                  ].map(([label, y1, y2, y3]) => (
+                    <tr key={label}>
+                      <td style={{ padding:'9px 14px', borderBottom:`1px solid ${S.border}`, fontWeight:500, color:S.text }}>{label}</td>
+                      <td style={{ padding:'9px 14px', borderBottom:`1px solid ${S.border}`, textAlign:'right', color: y1.startsWith('-') ? '#f87171' : y1.startsWith('+') ? S.greenLight : S.dim }}>{y1}</td>
+                      <td style={{ padding:'9px 14px', borderBottom:`1px solid ${S.border}`, textAlign:'right', color: y2.startsWith('-') ? '#f87171' : y2.startsWith('+') || y2.includes('✅') ? S.greenLight : S.dim }}>{y2}</td>
+                      <td style={{ padding:'9px 14px', borderBottom:`1px solid ${S.border}`, textAlign:'right', color: y3.startsWith('-') ? '#f87171' : y3.startsWith('+') || y3.includes('✅') ? S.greenLight : S.dim }}>{y3}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p style={{ marginTop:10, fontSize:11, color:S.dim, fontStyle:'italic' }}>
+              Het aanloopverlies in jaar 1 wordt gedekt door de gevraagde Bbz-financiering van €25.000. Vanaf jaar 2 is het bedrijf in staat zichzelf te bedruipen.
+            </p>
+          </Card>
+
+          <Card title="⏱️ Urenverantwoording">
+            <p style={{ marginBottom:16, fontSize:13, lineHeight:1.8 }}>
+              Het Bbz vereist dat een ondernemer minimaal <strong style={{ color:S.text }}>1.225 uur per jaar</strong> aan het bedrijf besteedt. Dit komt neer op gemiddeld circa 23–24 uur per week. Hieronder wordt aangetoond dat Albert Robijn ruimschoots aan deze eis voldoet.
+            </p>
+
+            <div style={{ overflowX:'auto', marginBottom:16 }}>
+              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
+                <thead>
+                  <tr>{['Activiteit','Uren/week','Uren/jaar'].map(h => <th key={h} style={{ padding:'9px 14px', textAlign: h==='Uren/jaar' ? 'right' : 'left', background:'rgba(37,99,235,0.08)', color:S.blueLight, fontSize:11, fontWeight:700 }}>{h}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['Productontwikkeling & technisch beheer','12 uur','624 uur'],
+                    ['Klantenondersteuning & tickets beantwoorden (dagelijks)','7 uur','364 uur'],
+                    ['Servermonitoring & incidentbeheer','4 uur','208 uur'],
+                    ['Marketing & sales','4 uur','208 uur'],
+                    ['Netwerk & communities (Discord, Reddit, LinkedIn)','2 uur','104 uur'],
+                    ['Overleg met accountant & zakelijke administratie','1 uur','52 uur'],
+                  ].map(([act, pw, py]) => (
+                    <tr key={act}>
+                      <td style={{ padding:'9px 14px', borderBottom:`1px solid ${S.border}`, color:S.text }}>{act}</td>
+                      <td style={{ padding:'9px 14px', borderBottom:`1px solid ${S.border}`, color:S.dim }}>{pw}</td>
+                      <td style={{ padding:'9px 14px', borderBottom:`1px solid ${S.border}`, textAlign:'right', fontWeight:600, color:S.text }}>{py}</td>
+                    </tr>
+                  ))}
+                  <tr style={{ background:'rgba(37,99,235,0.08)' }}>
+                    <td style={{ padding:'9px 14px', fontWeight:800, color:S.blueLight }}>Totaal</td>
+                    <td style={{ padding:'9px 14px', fontWeight:800, color:S.blueLight }}>30 uur/week</td>
+                    <td style={{ padding:'9px 14px', textAlign:'right', fontWeight:800, color:S.blueLight }}>1.560 uur/jaar</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{ background:S.greenBg, border:`1px solid ${S.greenBorder}`, borderRadius:10, padding:14 }}>
+              <div style={{ fontSize:12, fontWeight:700, color:S.greenLight, marginBottom:4 }}>✅ Conclusie urenverantwoording</div>
+              <div style={{ fontSize:12, color:S.dim, lineHeight:1.7 }}>
+                Albert Robijn besteedt naar verwachting gemiddeld <strong style={{ color:S.text }}>30 uur per week</strong> aan ShieldFlare, wat neerkomt op circa <strong style={{ color:S.text }}>1.560 uur per jaar</strong>. Dit is ruim boven de Bbz-minimumeis van 1.225 uur per jaar. Klantenondersteuning en monitoring vinden dagelijks plaats. De financiële administratie wordt uitbesteed aan een accountant. Doordat Albert thuis woont en geen andere fulltime werkzaamheden heeft, is deze tijdsinvestering realistisch en haalbaar.
+              </div>
+            </div>
+          </Card>
+
+        </Section></div>
+
+        {/* 8. Risicoanalyse */}
+        <div id="risico"><Section num="8" title="Risicoanalyse">
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:16, marginBottom:16 }}>
+            {[
+              ['🖥️','Serveruitval','Als de primaire server uitvalt, kunnen klanten tijdelijk geen gebruik maken van de diensten. ShieldFlare mitigeert dit risico door gebruik te maken van twee aparte VPS-providers (OVH en Hetzner) en automatische health checks die uitval direct detecteren. Bij groei wordt een tweede dedicated server toegevoegd voor redundantie.','Kans: Laag · Impact: Hoog'],
+              ['👥','Onvoldoende klanten in jaar 1','Het risico bestaat dat de klantengroei in het eerste jaar achterblijft bij de prognose. Dit wordt opgevangen door de werkkapitaalbuffer van €12.400 in de financieringsaanvraag, waardoor het bedrijf ook bij tegenvallende omzet minimaal twee jaar kan doordraaien.','Kans: Gemiddeld · Impact: Gemiddeld'],
+              ['🛡️','DDoS-aanval op eigen infrastructuur','Als cybercriminelen ShieldFlare zelf aanvallen, kan dit de dienstverlening verstoren. ShieldFlare gebruikt OVH Anti-DDoS als eerste verdedigingslinie en monitort het eigen netwerk continu via eigen monitoring tools.','Kans: Gemiddeld · Impact: Hoog'],
+              ['🔑','Gegevensverlies of beveiligingsincident','Een beveiligingslek bij klantdata kan reputatieschade veroorzaken. ShieldFlare slaat minimale persoonsgegevens op, gebruikt versleutelde verbindingen en maakt dagelijks backups. Bij een incident wordt direct gecommuniceerd conform de AVG-meldplicht.','Kans: Laag · Impact: Hoog'],
+              ['📉','Concurrentie van grote spelers','Cloudflare of een andere grote partij kan gameserverbescherming toevoegen aan hun platform. ShieldFlare reageert hierop door de nichefocus te behouden, het reseller-platform verder uit te bouwen en Nederlandse klantenservice als onderscheidend voordeel te benutten.','Kans: Laag · Impact: Gemiddeld'],
+              ['⚖️','Wet- en regelgeving (AVG)','ShieldFlare verwerkt persoonsgegevens van klanten. Dit brengt verplichtingen mee onder de AVG. ShieldFlare registreert zich als verwerkingsverantwoordelijke, stelt een privacybeleid op en verwerkt alleen noodzakelijke gegevens.','Kans: Laag · Impact: Gemiddeld'],
+            ].map(([icon, title, desc, kans]) => (
+              <div key={title} style={{ background:S.surface, border:`1px solid ${S.border}`, borderRadius:14, padding:20 }}>
+                <div style={{ fontSize:24, marginBottom:10 }}>{icon}</div>
+                <div style={{ fontSize:13, fontWeight:700, color:S.text, marginBottom:6 }}>{title}</div>
+                <div style={{ fontSize:12, color:S.dim, lineHeight:1.7, marginBottom:10 }}>{desc}</div>
+                <span style={{ fontSize:10, fontWeight:600, padding:'2px 9px', borderRadius:20, background:S.orangeBg, color:S.orangeLight, border:`1px solid ${S.orangeBorder}` }}>{kans}</span>
+              </div>
+            ))}
+          </div>
+          <Card title="📋 Risicomatrix samenvatting">
+            <div style={{ overflowX:'auto' }}>
+              <table style={{ width:'100%', borderCollapse:'collapse', fontSize:13 }}>
+                <thead>
+                  <tr>{['Risico','Kans','Impact','Maatregel'].map(h => <th key={h} style={{ padding:'9px 14px', textAlign:'left', background:'rgba(37,99,235,0.08)', color:S.blueLight, fontSize:11, fontWeight:700 }}>{h}</th>)}</tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['Serveruitval','Laag','Hoog','Redundante infrastructuur, health checks'],
+                    ['Onvoldoende klanten','Gemiddeld','Gemiddeld','Werkkapitaalbuffer 2 jaar'],
+                    ['DDoS op eigen infra','Gemiddeld','Hoog','OVH Anti-DDoS + eigen monitoring'],
+                    ['Beveiligingsincident','Laag','Hoog','Backups, encryptie, AVG-meldplicht'],
+                    ['Grote concurrent','Laag','Gemiddeld','Nichefocus + reseller-platform'],
+                    ['AVG/regelgeving','Laag','Gemiddeld','Privacybeleid + minimale dataopslag'],
+                  ].map(([r,k,i,m]) => (
+                    <tr key={r}>
+                      <td style={{ padding:'9px 14px', borderBottom:`1px solid ${S.border}`, fontWeight:500, color:S.text }}>{r}</td>
+                      <td style={{ padding:'9px 14px', borderBottom:`1px solid ${S.border}`, color: k==='Hoog'?'#f87171':k==='Gemiddeld'?S.orangeLight:S.greenLight }}>{k}</td>
+                      <td style={{ padding:'9px 14px', borderBottom:`1px solid ${S.border}`, color: i==='Hoog'?'#f87171':i==='Gemiddeld'?S.orangeLight:S.greenLight }}>{i}</td>
+                      <td style={{ padding:'9px 14px', borderBottom:`1px solid ${S.border}`, color:S.dim, fontSize:12 }}>{m}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </Section></div>
+
+        {/* 8. Persoonlijke ontwikkeling */}
+        <div id="ontwikkeling"><Section num="9" title="Persoonlijke ontwikkeling">
+          <Card style={{ marginBottom:16 }}>
+            <p style={{ fontSize:15, color:S.text, lineHeight:1.9, marginBottom:0 }}>
+              Albert Robijn heeft als zelfgeleerde ontwikkelaar al een breed technisch fundament opgebouwd. Om ShieldFlare verder te professionaliseren en de geloofwaardigheid richting zakelijke klanten te vergroten, is het de bedoeling om de komende jaren gerichte certificeringen te behalen en kennis verder te verdiepen op het gebied van netwerken, cybersecurity en cloudinfrastructuur.
+            </p>
+          </Card>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))', gap:16, marginBottom:16 }}>
+            {[
+              ['🌐','CompTIA Network+','Fundamentele netwerkcertificering die kennis van TCP/IP, routing, switching en netwerkbeveiliging valideert. Relevant voor de verdere ontwikkeling van ShieldFlare netwerkinfrastructuur.','Prioriteit: Hoog'],
+              ['🛡️','CompTIA Security+','Breed erkende cybersecuritycertificering die aantoont dat Albert de benodigde kennis heeft om beveiligingsdiensten professioneel aan te bieden. Vergroot vertrouwen bij zakelijke klanten.','Prioriteit: Hoog'],
+              ['🔒','Certified Ethical Hacker (CEH)','Certificering gericht op offensieve beveiligingstechnieken. Helpt bij het beter begrijpen van aanvalsmethoden en het verder verbeteren van ShieldFlare detectie- en mitigatiecapaciteiten.','Prioriteit: Gemiddeld'],
+              ['☁️','AWS / Azure Cloud Fundamentals','Basiskennis van cloudplatforms. Relevant voor toekomstige uitbreiding van ShieldFlare naar meerdere locaties en cloudgebaseerde infrastructuur.','Prioriteit: Gemiddeld'],
+              ['📊','Boekhouden voor ondernemers','Praktische kennis van financiële administratie, BTW-aangifte en ondernemersfiscaliteit. Noodzakelijk voor het zelfstandig bijhouden van de administratie in de beginfase.','Prioriteit: Hoog'],
+              ['🤝','Ondernemersvaardigheden','Cursussen op het gebied van klantcommunicatie, onderhandelen en marketing. Helpt bij het professioneel benaderen van potentiële klanten en resellers.','Prioriteit: Gemiddeld'],
+            ].map(([icon, title, desc, prio]) => (
+              <div key={title} style={{ background:S.surface, border:`1px solid ${S.border}`, borderRadius:14, padding:20 }}>
+                <div style={{ fontSize:24, marginBottom:10 }}>{icon}</div>
+                <div style={{ fontSize:13, fontWeight:700, color:S.text, marginBottom:6 }}>{title}</div>
+                <div style={{ fontSize:12, color:S.dim, lineHeight:1.7, marginBottom:10 }}>{desc}</div>
+                <span style={{ fontSize:10, fontWeight:600, padding:'2px 9px', borderRadius:20, background: prio.includes('Hoog') ? S.greenBg : S.blueBg, color: prio.includes('Hoog') ? S.greenLight : S.blueLight, border:`1px solid ${prio.includes('Hoog') ? S.greenBorder : S.blueBorder}` }}>{prio}</span>
+              </div>
+            ))}
+          </div>
+          <Card title="🎯 Doelstelling persoonlijke ontwikkeling">
+            <p style={{ fontSize:13, lineHeight:1.8 }}>
+              De certificeringen worden gefaseerd behaald. In het eerste jaar ligt de focus op CompTIA Network+, CompTIA Security+ en basiskennis boekhouden. Deze drie vormen de basis voor professionele dienstverlening en correcte administratie. In jaar 2 en 3 worden aanvullende certificeringen behaald naarmate het bedrijf groeit en de behoefte aan gespecialiseerde kennis toeneemt.
+            </p>
+          </Card>
+        </Section></div>
+
+        {/* 9. Financieel */}
         <div id="financieel"><Section num="7" title="Financieel plan">
 
           {/* Investeringsbegroting */}
