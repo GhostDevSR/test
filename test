@@ -1,0 +1,73 @@
+root@vps-a07248be:/var/www/Shieldflare/frontend# cat /var/www/Shieldflare/frontend/src/pages/Plan.jsx | tail -70 > /tmp/plan_tail.txt
+root@vps-a07248be:/var/www/Shieldflare/frontend# cat /tmp/plan_tail.txt 
+                blijft het break-evenpunt bereikbaar. Bij circa 50 betalende klanten komt ShieldFlare naar
+                verwachting in de buurt van operationeel break-even.
+              </div>
+            </div>
+
+          </Card>
+
+        </Section></div>
+
+      </div>
+
+        {/* Conclusie */}
+        <div style={{ marginBottom:64 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:28, paddingBottom:16, borderBottom:`1px solid ${S.border}` }}>
+            <div style={{ width:34, height:34, background:'linear-gradient(135deg,#2563eb,#7c3aed)', borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, fontWeight:800, color:'white', flexShrink:0 }}>✦</div>
+            <h2 style={{ fontSize:21, fontWeight:800, color:'white', margin:0 }}>Conclusie</h2>
+          </div>
+
+          <div style={{ background:S.surface, border:`1px solid ${S.border}`, borderRadius:14, padding:28 }}>
+            <p style={{ fontSize:15, lineHeight:1.9, marginBottom:16, color:S.text }}>
+              ShieldFlare is een technisch volledig operationeel cyberbeveiligingsplatform dat ik volledig zelf heb gebouwd. Het richt zich op een markt die door grote partijen onvoldoende wordt bediend: kleine bedrijven, gamers, hostingbedrijven en resellers die professionele DDoS-bescherming nodig hebben, maar geen enterprise-budget hebben.
+            </p>
+            <p style={{ fontSize:15, lineHeight:1.9, marginBottom:16, color:S.text }}>
+              Ik heb aangetoond dat het bedrijf binnen drie jaar levensvatbaar is. De privébehoefte is laag doordat ik thuis woon, de infrastructuur wordt gefaseerd opgebouwd, en de gevraagde Bbz-financiering van €25.000 biedt voldoende buffer om de aanloopperiode te overbruggen. Vanaf jaar 2 verwacht ik een positief bedrijfsresultaat, en vanaf jaar 3 een structureel winstgevende onderneming.
+            </p>
+            <p style={{ fontSize:15, lineHeight:1.9, marginBottom:28, color:S.text }}>
+              Ik ben ervan overtuigd dat ShieldFlare een reële kans heeft op de markt. Het platform is uniek in zijn combinatie van diensten, het is volledig in het Engels voor internationale groei, en de drempel voor klanten is laag dankzij het gratis instapplan. Met de juiste financiële ondersteuning kan ik ShieldFlare officieel lanceren en uitgroeien tot een betrouwbare aanbieder van cyberbeveiligingsdiensten.
+            </p>
+
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))', gap:14 }}>
+              {[
+                ['🛡️','Platform klaar','Technisch volledig operationeel'],
+                ['🌍','Internationaal','Volledig Engelstalig platform'],
+                ['💰','€25.000','Gevraagde Bbz-financiering'],
+                ['📈','Jaar 2','Verwacht break-even'],
+                ['🎯','50 klanten','Break-even bereikt'],
+                ['🚀','Jaar 3','+€42.000 bedrijfsresultaat'],
+              ].map(([icon, label, sub]) => (
+                <div key={label} style={{ background:'rgba(37,99,235,0.06)', border:`1px solid ${S.border}`, borderRadius:10, padding:16, textAlign:'center' }}>
+                  <div style={{ fontSize:22, marginBottom:6 }}>{icon}</div>
+                  <div style={{ fontSize:14, fontWeight:700, color:S.blueLight }}>{label}</div>
+                  <div style={{ fontSize:11, color:S.dim, marginTop:3 }}>{sub}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop:24, padding:'16px 20px', background:'rgba(37,99,235,0.06)', border:`1px solid rgba(37,99,235,0.2)`, borderRadius:10, textAlign:'center' }}>
+              <div style={{ fontSize:13, color:S.dim, lineHeight:1.8 }}>
+                <strong style={{ color:S.text }}>Albert Robijn</strong> · Oprichter ShieldFlare · 2026<br/>
+                <a href="https://shieldflare.nl" style={{ color:S.blueLight, textDecoration:'none' }}>shieldflare.nl</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style={{ borderTop:`1px solid ${S.border}`, padding:'24px 32px', textAlign:'center', fontSize:12, color:S.xs }}>
+        © 2026 ShieldFlare · Vertrouwelijk ondernemingsplan · Albert Robijn · shieldflare.nl
+      </div>
+    </div>
+    </>
+  )
+}
+
+export default function Plan() {
+  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem('plan_unlocked') === '1')
+  if (!unlocked) return <Lock onUnlock={() => setUnlocked(true)} />
+  return <PlanContent />
+}
+root@vps-a07248be:/var/www/Shieldflare/frontend# 
