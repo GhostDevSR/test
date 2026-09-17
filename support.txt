@@ -1,0 +1,196 @@
+root@vps-a07248be:/var/www/Shieldflare/frontend# cat /var/www/Shieldflare/backend/src/modules/support/support.router.js > /tmp/support.txt && cat /tmp/support.txt
+const { auditLog } = require('../../middleware/audit')
+const router  = require('express').Router()
+const crypto  = require('crypto')
+const jwt     = require('jsonwebtoken')
+const { prisma } = require('../../lib/prisma')
+const { auth } = require('../../middleware/auth')
+
+function isStaff(user) {
+  return ['ADMIN','SUPPORT','TECHNISCH'].includes(user.role)
+}
+
+// ── Medewerker: code aanmaken ─────────────────────────────────────────────────
+router.post('/token/create', auth, async (req, res) => {
+  try {
+    if (!isStaff(req.user)) return res.status(403).json({ error: 'Access denied' })
+
+    const token = 'SF-' + crypto.randomBytes(3).toString('hex').toUpperCase()
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
+
+    const supportToken = await prisma.supportToken.create({
+      data: {
+        createdBy: req.user.id,
+        token,
+        expiresAt,
+        status: 'PENDING'
+      }
+    })
+
+    res.json({ token: supportToken })
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+// ── Medewerker: eigen tokens ophalen ─────────────────────────────────────────
+router.get('/tokens', auth, async (req, res) => {
+  try {
+    if (!isStaff(req.user)) return res.status(403).json({ error: 'Access denied' })
+
+    const tokens = await prisma.supportToken.findMany({
+      where: { createdBy: req.user.id },
+      include: { targetUser: { select: { id:true, name:true, email:true } } },
+      orderBy: { createdAt: 'desc' },
+      take: 20
+    })
+    res.json({ tokens })
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+// ── Staff: login as client ────────────────────────────────────────────────────
+router.post('/impersonate/:tokenId', auth, async (req, res) => {
+  try {
+    if (!isStaff(req.user)) return res.status(403).json({ error: 'Access denied' })
+
+    const supportToken = await prisma.supportToken.findFirst({
+      where: {
+        id: req.params.tokenId,
+        createdBy: req.user.id,
+        status: 'ACCEPTED',
+        expiresAt: { gt: new Date() }
+      },
+      include: { targetUser: true }
+    })
+
+    if (!supportToken) return res.status(404).json({ error: 'Token not found or not yet accepted by client' })
+
+    const jwtToken = jwt.sign(
+      {
+        id: supportToken.targetUser.id,
+        role: supportToken.targetUser.role,
+        sessionVersion: supportToken.targetUser.sessionVersion,
+        impersonatedBy: req.user.id,
+        impersonatorName: req.user.name
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' }
+    )
+
+    res.json({
+      token: jwtToken,
+      user: { id: supportToken.targetUser.id, name: supportToken.targetUser.name, email: supportToken.targetUser.email }
+    })
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+// ── Medewerker: notitie toevoegen ────────────────────────────────────────────
+router.post('/note/:tokenId', auth, async (req, res) => {
+  try {
+    if (!isStaff(req.user)) return res.status(403).json({ error: 'Access denied' })
+    const { content } = req.body
+    if (!content?.trim()) return res.status(400).json({ error: 'Note is required' })
+
+    const note = await prisma.supportNote.create({
+      data: {
+        tokenId: req.params.tokenId,
+        authorId: req.user.id,
+        content: content.trim()
+      },
+      include: { author: { select: { name:true, role:true } } }
+    })
+    res.json({ note })
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+// ── Medewerker: notities ophalen ─────────────────────────────────────────────
+router.get('/notes/:tokenId', auth, async (req, res) => {
+  try {
+    if (!isStaff(req.user)) return res.status(403).json({ error: 'Access denied' })
+    const notes = await prisma.supportNote.findMany({
+      where: { tokenId: req.params.tokenId },
+      include: { author: { select: { name:true, role:true } } },
+      orderBy: { createdAt: 'asc' }
+    })
+    res.json({ notes })
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+// ── Admin: alle tokens zien ───────────────────────────────────────────────────
+router.get('/admin/tokens', auth, async (req, res) => {
+  try {
+    if (req.user.role !== 'ADMIN') return res.status(403).json({ error: 'Access denied' })
+    const tokens = await prisma.supportToken.findMany({
+      include: {
+        creator: { select: { name:true, email:true, role:true } },
+        targetUser: { select: { name:true, email:true } }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 50
+    })
+    res.json({ tokens })
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+// ── Klant: code invoeren ──────────────────────────────────────────────────────
+router.post('/accept', auth, async (req, res) => {
+  try {
+    const { token } = req.body
+    if (!token) return res.status(400).json({ error: 'Code is required' })
+
+    const supportToken = await prisma.supportToken.findFirst({
+      where: {
+        token: token.toUpperCase(),
+        status: 'PENDING',
+        expiresAt: { gt: new Date() }
+      },
+      include: { creator: { select: { name:true, role:true } } }
+    })
+
+    if (!supportToken) return res.status(404).json({ error: 'Invalid or expired code' })
+
+    await prisma.supportToken.update({
+      where: { id: supportToken.id },
+      data: {
+        status: 'ACCEPTED',
+        acceptedAt: new Date(),
+        acceptedBy: req.user.id,
+        targetUserId: req.user.id
+      }
+    })
+
+    res.json({
+      success: true,
+      medewerker: supportToken.creator.name,
+      expiresAt: supportToken.expiresAt
+    })
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+// ── Klant: huidige toegang zien ──────────────────────────────────────────────
+router.get('/access', auth, async (req, res) => {
+  try {
+    const tokens = await prisma.supportToken.findMany({
+      where: {
+        targetUserId: req.user.id,
+        status: 'ACCEPTED',
+        expiresAt: { gt: new Date() }
+      },
+      include: { creator: { select: { name:true, role:true } } },
+      orderBy: { createdAt: 'desc' }
+    })
+    res.json({ tokens })
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+// ── Klant: toegang intrekken ─────────────────────────────────────────────────
+router.delete('/access/:tokenId', auth, async (req, res) => {
+  try {
+    await prisma.supportToken.update({
+      where: { id: req.params.tokenId },
+      data: { status: 'REVOKED' }
+    })
+    res.json({ success: true })
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+module.exports = router
+root@vps-a07248be:/var/www/Shieldflare/frontend# 
