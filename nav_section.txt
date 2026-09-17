@@ -1,0 +1,95 @@
+root@vps-a07248be:/var/www/Shieldflare/frontend# cat /tmp/nav
+nav.txt          nav_section.txt  
+root@vps-a07248be:/var/www/Shieldflare/frontend# cat /tmp/nav_section.txt 
+      if (!el) return null
+      const observer = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveSection(id) },
+        { rootMargin: '-30% 0px -60% 0px', threshold: 0 }
+      )
+      observer.observe(el)
+      return observer
+    }).filter(Boolean)
+    return () => observers.forEach(o => o.disconnect())
+  }, [])
+
+  const navItems = [
+    ['samenvatting','📋 Samenvatting'],['ondernemer','👤 Ondernemer'],['onderneming','🏢 Onderneming'],
+    ['markt','📊 Markt'],['marketing','📣 Marketing'],['swot','⚖️ SWOT'],
+    ['levensvatbaarheid','✅ Levensvatbaar'],['juridisch','⚖️ Juridisch'],['risico','⚠️ Risico'],['ontwikkeling','📚 Ontwikkeling'],['financieel','💰 Financieel'],['groei','🚀 Groei'],
+  ]
+
+  function scrollTo(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior:'smooth', block:'start' })
+    setActiveSection(id)
+  }
+
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  return (
+    <>
+      <style>{responsiveCSS}</style>
+      <div style={{ minHeight:'100vh', background:S.bg, color:S.text, fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif' }}>
+
+      {/* Nav */}
+      <nav style={{ position:'sticky', top:0, zIndex:100, background:'rgba(10,15,30,0.96)', backdropFilter:'blur(20px)', borderBottom:`1px solid ${S.border}`, padding:'0 20px', display:'flex', alignItems:'center', height:58, gap:12 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10, flexShrink:0 }}>
+          <a href="https://shieldflare.nl/">
+            <img src="https://shieldflare.nl/logo.png" alt="ShieldFlare" style={{ width: 30, height: 30, borderRadius: 7, objectFit: 'contain' }} />
+          </a>
+          <span style={{ fontSize:15, fontWeight:800 }}>ShieldFlare</span>
+        </div>
+        <span style={{ fontSize:10, background:S.blueBg, border:`1px solid ${S.blueBorder}`, color:S.blueLight, padding:'2px 8px', borderRadius:20, fontWeight:600, flexShrink:0, display:'var(--badge-display, inline-block)' }}>Ondernemingsplan 2026</span>
+
+        {/* Desktop links */}
+        <div className="sf-plan-nav-links" style={{ display:'flex', gap:2, marginLeft:'auto', flexShrink:0 }}>
+          {navItems.map(([id, label]) => (
+            <button key={id} onClick={() => { scrollTo(id); setMenuOpen(false) }}
+              style={{ padding:'5px 10px', fontSize:11, color: activeSection===id ? S.blueLight : S.dim, background: activeSection===id ? S.blueBg : 'none', border:'none', borderRadius:6, cursor:'pointer', whiteSpace:'nowrap', fontWeight: activeSection===id ? 600 : 400 }}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* Hamburger */}
+        <button className="sf-plan-hamburger" onClick={() => setMenuOpen(o => !o)}
+          style={{ marginLeft:'auto', background:'none', border:'none', cursor:'pointer', padding:8, color:S.text, fontSize:20, display:'none', flexShrink:0 }}>
+          {menuOpen ? '✕' : '☰'}
+        </button>
+      </nav>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="sf-plan-mobile-menu" style={{ position:'fixed', top:58, left:0, right:0, zIndex:99, background:'rgba(10,15,30,0.98)', backdropFilter:'blur(20px)', borderBottom:`1px solid ${S.border}`, padding:16, display:'flex', flexDirection:'column', gap:4 }}>
+          {navItems.map(([id, label]) => (
+            <button key={id} onClick={() => { scrollTo(id); setMenuOpen(false) }}
+              style={{ padding:'12px 16px', fontSize:14, color: activeSection===id ? S.blueLight : S.text, background: activeSection===id ? S.blueBg : 'none', border:'none', borderRadius:8, cursor:'pointer', textAlign:'left', fontWeight: activeSection===id ? 600 : 400 }}>
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <style>{`
+        @media (max-width: 768px) {
+          .sf-plan-nav-links { display: none !important; }
+          .sf-plan-hamburger { display: flex !important; }
+        }
+      `}</style>
+
+      {/* Hero */}
+      <div style={{ padding:'72px 40px 56px', textAlign:'center', maxWidth:860, margin:'0 auto' }}>
+        <Badge color="blue">Vertrouwelijk ondernemingsplan 2026</Badge>
+        <h1 style={{ fontSize:'clamp(2rem,5vw,3rem)', fontWeight:900, letterSpacing:'-0.03em', margin:'20px 0 16px', color:'white', lineHeight:1.15 }}>
+          ShieldFlare<br/>
+          <span style={{ background:'linear-gradient(135deg,#2563eb,#7c3aed)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>Next-Generation DDoS Protection</span>
+        </h1>
+        <p style={{ fontSize:16, color:S.dim, maxWidth:580, margin:'0 auto 36px', lineHeight:1.8 }}>
+          Ondernemingsplan voor een cyberbeveiligingsbedrijf dat enterprise-grade DDoS-bescherming toegankelijk maakt voor het MKB, gamers en ontwikkelaars.
+        </p>
+        <div style={{ display:'flex', gap:28, justifyContent:'center', flexWrap:'wrap' }}>
+          {[['Albert Robijn','Oprichter & ontwikkelaar'],['Eenmanszaak','Rechtsvorm'],['(Nog onbekend)','Startjaar'],['2026','Ontwikkelingsjaar'],['Nederland','Vestigingsland']].map(([v,l]) => (
+            <div key={l} style={{ textAlign:'center' }}>
+              <div style={{ fontSize:15, fontWeight:800, color:S.blueLight }}>{v}</div>
+              <div style={{ fontSize:11, color:S.dim, marginTop:2 }}>{l}</div>
+            </div>
+root@vps-a07248be:/var/www/Shieldflare/frontend# 
