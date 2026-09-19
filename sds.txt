@@ -1,0 +1,83 @@
+root@vps-a07248be:/var/www/Shieldflare/frontend# sed -n '100,180p' /var/www/Shieldflare/frontend/src/pages/dashboard/Analytics.jsx
+    return data.stats.map(s => ({
+      label: s.label||s.hour,
+      blocked: s.blocked||0,
+      allowed: s.allowed||0,
+      normal: tMap[s.label||s.hour]?.normal||0,
+      bandwidth: tMap[s.label||s.hour]?.bandwidth||0,
+    }))
+  })()
+
+  const ipChartData = (() => {
+    if (!ipData?.attacks?.length) return []
+    const byHour = {}
+    for (const a of ipData.attacks) {
+      const h = new Date(a.detectedAt).getHours().toString().padStart(2,'0')+':00'
+      if (!byHour[h]) byHour[h] = { hour:h, attacks:0, requests:0 }
+      byHour[h].attacks++; byHour[h].requests += a.requestCount||0
+    }
+    return Object.values(byHour).sort((a,b)=>a.hour.localeCompare(b.hour))
+  })()
+
+  return (
+    <>
+      <div className="topbar">
+        <div className="topbar-title">Analytics</div>
+      </div>
+
+      <div className="content">
+        {/* Mode + service selector */}
+        <div style={{ display:'flex', gap:8, marginBottom:16, flexWrap:'wrap', alignItems:'center' }}>
+          {/* Mode */}
+          <div style={{ display:'flex', gap:4, background:'var(--surface-2)', borderRadius:10, padding:4, border:'1px solid var(--border)' }}>
+            {[['domain','🌐 Domains'],['ip','🛡️ IP Guard']].map(([v,l]) => (
+              <button key={v} onClick={() => { setMode(v); if(v==='domain'&&domains.length>0) setSelected(domains[0].id); if(v==='ip'&&ips.length>0) setSelected(ips[0].id) }}
+                style={{ padding:'6px 14px', borderRadius:7, fontSize:12, fontWeight:500, border:'none', cursor:'pointer', background:mode===v?'var(--primary)':'transparent', color:mode===v?'white':'var(--text-dim)', transition:'all .12s' }}>
+                {l}
+              </button>
+            ))}
+          </div>
+
+          {/* Service selector */}
+          {mode==='domain' && domains.length>0 && (
+            <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
+              {domains.map(d => (
+                <button key={d.id} onClick={() => setSelected(d.id)}
+                  style={{ padding:'5px 12px', borderRadius:20, fontSize:12, fontWeight:500, border:`1px solid ${selected===d.id?'var(--primary)':'var(--border)'}`, background:selected===d.id?'var(--primary-dim)':'var(--surface)', color:selected===d.id?'var(--primary)':'var(--text-dim)', cursor:'pointer' }}>
+                  {d.name}
+                </button>
+              ))}
+            </div>
+          )}
+          {mode==='ip' && ips.length>0 && (
+            <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
+              {ips.map(ip => (
+                <button key={ip.id} onClick={() => setSelected(ip.id)}
+                  style={{ padding:'5px 12px', borderRadius:20, fontSize:12, fontWeight:500, fontFamily:'var(--mono)', border:`1px solid ${selected===ip.id?'var(--primary)':'var(--border)'}`, background:selected===ip.id?'var(--primary-dim)':'var(--surface)', color:selected===ip.id?'var(--primary)':'var(--text-dim)', cursor:'pointer' }}>
+                  {ip.ip}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Period selector - domains only */}
+          {mode==='domain' && (
+            <div style={{ marginLeft:'auto', display:'flex', gap:4, background:'var(--surface-2)', borderRadius:10, padding:4, border:'1px solid var(--border)' }}>
+              {PERIODS.map(p => (
+                <button key={p.value} onClick={() => setPeriod(p.value)}
+                  style={{ padding:'5px 12px', borderRadius:7, fontSize:12, fontWeight:500, border:'none', cursor:'pointer', background:period===p.value?'var(--primary)':'transparent', color:period===p.value?'white':'var(--text-dim)', transition:'all .12s' }}>
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Empty state */}
+        {((mode==='domain'&&domains.length===0)||(mode==='ip'&&ips.length===0)) && (
+          <div style={{ background:'var(--surface)', border:'1px solid var(--border)', borderRadius:'var(--r-lg)', padding:60, textAlign:'center' }}>
+            <div style={{ fontSize:44, marginBottom:12, opacity:.3 }}>{mode==='domain'?'🌐':'🛡️'}</div>
+            <div style={{ fontSize:15, fontWeight:600, marginBottom:6 }}>No {mode==='domain'?'domains':'IPs'}</div>
+            <div style={{ fontSize:13, color:'var(--text-dim)' }}>Add a service to see analytics.</div>
+          </div>
+root@vps-a07248be:/var/www/Shieldflare/frontend#
