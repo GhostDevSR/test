@@ -1,0 +1,164 @@
+root@vps-a07248be:~# cat /tmp/analytics_router.txt
+const router = require('express').Router()
+const { prisma } = require('../../lib/prisma')
+const { auth } = require('../../middleware/auth')
+
+router.use(auth)
+
+function getPeriod(period) {
+  const now = Date.now()
+  switch (period) {
+    case '24h':  return { since: new Date(now - 24*3600000), groupBy: 'hour', format: (d) => new Date(d).toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }).substring(0,5) }
+    case '7d':   return { since: new Date(now - 7*86400000),    groupBy: 'day',   format: (d) => new Date(d).toLocaleDateString('en-US',{weekday:'short',day:'numeric'}) }
+    case '30d':  return { since: new Date(now - 30*86400000),   groupBy: 'day',   format: (d) => new Date(d).toLocaleDateString('en-US',{day:'numeric',month:'short'}) }
+    case '90d':  return { since: new Date(now - 90*86400000),   groupBy: 'week',  format: (d) => 'Week '+Math.ceil(new Date(d).getDate()/7)+' '+new Date(d).toLocaleDateString('en-US',{month:'short'}) }
+    default:     return { since: new Date(now - 24*3600000),    groupBy: 'hour',  format: (d) => new Date(d).getHours().toString().padStart(2,'0')+':00' }
+  }
+}
+
+function generateSlots(since, groupBy, format) {
+  const slots = new Map()
+  const now   = new Date()
+  let current = new Date(since)
+
+  while (current <= now) {
+    const key = format(current)
+    if (!slots.has(key)) slots.set(key, { blocked:0, allowed:0, bandwidth:0, normal:0 })
+    if (groupBy==='hour')      current = new Date(current.getTime() + 3600000)
+    else if (groupBy==='day')  current = new Date(current.getTime() + 86400000)
+    else                       current = new Date(current.getTime() + 7*86400000)
+  }
+  return slots
+}
+
+router.get('/:domainId/traffic', async (req, res) => {
+  try {
+    const domain = await prisma.domain.findFirst({ where: { id: req.params.domainId, userId: req.user.id } })
+    if (!domain) return res.status(403).json({ error: 'Access denied' })
+
+    const { period = '24h' } = req.query
+    const { since, groupBy, format } = getPeriod(period)
+
+    const stats = await prisma.trafficStat.findMany({
+      where: { domainId: req.params.domainId, minute: { gt: since } },
+      orderBy: { minute: 'asc' }
+    })
+
+    const slots = generateSlots(since, groupBy, format)
+    for (const s of stats) {
+      const key = format(s.minute)
+      if (!slots.has(key)) slots.set(key, { blocked:0, allowed:0, bandwidth:0, normal:0 })
+      const slot = slots.get(key)
+      slot.blocked   += s.blocked   || 0
+      slot.normal    += s.normal    || 0
+      slot.bandwidth += s.bandwidth || 0
+    }
+
+    res.json({ stats: Array.from(slots.entries()).map(([label, v]) => ({ label, ...v })), period })
+    // Stats zijn al gesorteerd door Map insertion order
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+router.get('/:domainId/attacks', async (req, res) => {
+  try {
+    const domain = await prisma.domain.findFirst({ where: { id: req.params.domainId, userId: req.user.id } })
+    if (!domain) return res.status(403).json({ error: 'Access denied' })
+
+    const { period = '24h' } = req.query
+    const { since, groupBy, format } = getPeriod(period)
+
+    const logs = await prisma.attackLog.findMany({
+      where: { domainId: req.params.domainId, createdAt: { gt: since } },
+      orderBy: { createdAt: 'asc' }
+    })
+
+    const slots = generateSlots(since, groupBy, format)
+    for (const log of logs) {
+      const key = format(log.createdAt)
+      if (!slots[key]) slots[key] = { blocked:0, allowed:0, bandwidth:0, normal:0 }
+      if (log.blocked) slots[key].blocked++
+      else slots[key].allowed++
+    }
+
+    // Top aanvallers
+    const ipCount = {}
+    for (const log of logs.filter(l => l.blocked && l.sourceIp)) {
+      if (!ipCount[log.sourceIp]) ipCount[log.sourceIp] = { count:0, country:log.country||'—', lastSeen:log.createdAt }
+      ipCount[log.sourceIp].count++
+      if (new Date(log.createdAt) > new Date(ipCount[log.sourceIp].lastSeen)) ipCount[log.sourceIp].lastSeen = log.createdAt
+    }
+    const topAttackers = Object.entries(ipCount).sort((a,b)=>b[1].count-a[1].count).slice(0,10).map(([ip,v])=>({ ip,...v }))
+
+    // Landen stats
+    const countryCount = {}
+    for (const log of logs.filter(l=>l.blocked&&l.country)) {
+      countryCount[log.country] = (countryCount[log.country]||0)+1
+    }
+    const topCountries = Object.entries(countryCount).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([country,count])=>({ country, count }))
+
+    res.json({
+      stats: Object.entries(slots).map(([label, v]) => ({ hour:label, label, ...v })),
+      topAttackers,
+      topCountries,
+      totalBlocked: logs.filter(l=>l.blocked).length,
+      totalAllowed: logs.filter(l=>!l.blocked).length,
+      period
+    })
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+router.get('/:domainId/logs', async (req, res) => {
+  try {
+    const domain = await prisma.domain.findFirst({ where: { id: req.params.domainId, userId: req.user.id } })
+    if (!domain) return res.status(403).json({ error: 'Access denied' })
+    const { limit = 100 } = req.query
+    const logs = await prisma.accessLog.findMany({
+      where: { domainId: req.params.domainId },
+      orderBy: { createdAt: 'desc' },
+      take: parseInt(limit)
+    })
+    res.json({ logs })
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+
+module.exports = router
+
+// IP Guard analytics
+router.get('/ip/:ipId/attacks', auth, async (req, res) => {
+  try {
+    const protectedIP = await prisma.protectedIP.findFirst({
+      where: { id: req.params.ipId, userId: req.user.id }
+    })
+    if (!protectedIP) return res.status(404).json({ error: 'IP not found' })
+
+    const attacks = await prisma.attackEvent.findMany({
+      where: { protectedIPId: protectedIP.id },
+      orderBy: { detectedAt: 'desc' },
+      take: 100
+    })
+
+    // Top landen
+    const countryCount = {}
+    for (const a of attacks.filter(a => a.country)) {
+      countryCount[a.country] = (countryCount[a.country]||0)+1
+    }
+    const topCountries = Object.entries(countryCount)
+      .sort((a,b)=>b[1]-a[1])
+      .slice(0,10)
+      .map(([country,count])=>({ country, count }))
+
+    // Top aanvallers
+    const ipCount = {}
+    for (const a of attacks) {
+      if (!ipCount[a.sourceIp]) ipCount[a.sourceIp] = { count:0, country:a.country||'—' }
+      ipCount[a.sourceIp].count++
+    }
+    const topAttackers = Object.entries(ipCount)
+      .sort((a,b)=>b[1].count-a[1].count)
+      .slice(0,10)
+      .map(([ip,v])=>({ ip,...v }))
+
+    res.json({ attacks, topCountries, topAttackers, totalAttacks: attacks.length })
+  } catch (e) { res.status(500).json({ error: e.message }) }
+})
+root@vps-a07248be:~#
